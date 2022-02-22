@@ -111,7 +111,7 @@ def _make_stripe_checkout_params(
         "mode": checkout_mode,
         "line_items": line_items,
         "subscription_data": {
-            "trial_end": int(_make_trial_end_datetime(trial_end=trial_end).timestamp())
+            "trial_end": _make_trial_end_datetime(trial_end=trial_end)
         }
     }
     
@@ -121,8 +121,6 @@ def _make_stripe_checkout_params(
         ret.update({"allow_promotion_codes": allow_promotion_codes})
     else:
         ret.update({"discounts": discounts if discounts else drf_stripe_settings.DEFAULT_DISCOUNTS})
-        
-    print(ret)
         
     return ret
 
@@ -134,11 +132,13 @@ def _make_trial_end_datetime(trial_end=None):
     Return None if less than 48 hours left to set up trialing with Stripe
 
     """
-    if trial_end is None:
+    if trial_end == 0:
+        return None
+    elif trial_end is None:
         trial_end = timezone.now() + timezone.timedelta(days=drf_stripe_settings.NEW_USER_FREE_TRIAL_DAYS)
+    else:
+        min_trial_end = timezone.now() + timedelta(hours=49)
+        if trial_end < min_trial_end:
+            trial_end = min_trial_end
 
-    min_trial_end = timezone.now() + timedelta(hours=49)
-    if trial_end < min_trial_end:
-        trial_end = min_trial_end
-
-    return trial_end.replace(microsecond=0)
+    return int(trial_end.replace(microsecond=0).timestamp())
