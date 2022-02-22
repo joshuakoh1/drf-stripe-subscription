@@ -117,10 +117,12 @@ def _make_stripe_checkout_params(
     
     allow_promotion_codes = drf_stripe_settings.ALLOW_PROMOTION_CODES
     
-    if allow_promotion_codes:
+    if discounts:
+        ret.update({"discounts": discounts})
+    elif allow_promotion_codes:
         ret.update({"allow_promotion_codes": allow_promotion_codes})
     else:
-        ret.update({"discounts": discounts if discounts else drf_stripe_settings.DEFAULT_DISCOUNTS})
+        ret.update({"discounts": drf_stripe_settings.DEFAULT_DISCOUNTS})
         
     return ret
 
