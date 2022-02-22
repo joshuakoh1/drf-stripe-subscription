@@ -21,7 +21,6 @@ class StripeSubscriptionStatus(str, Enum):
 
 ACCESS_GRANTING_STATUSES = (
     StripeSubscriptionStatus.ACTIVE,
-    StripeSubscriptionStatus.PAST_DUE,
     StripeSubscriptionStatus.TRIALING
 )
 
