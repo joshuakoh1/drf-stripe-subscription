@@ -3,7 +3,7 @@ from .customers import get_or_create_stripe_user
 from ..settings import drf_stripe_settings
 
 
-def stripe_api_create_billing_portal_session(user_id):
+def stripe_api_create_billing_portal_session(user_id, return_url = None):
     """
     Creates a Stripe Customer Portal Session.
 
@@ -11,9 +11,12 @@ def stripe_api_create_billing_portal_session(user_id):
     """
     stripe_user = get_or_create_stripe_user(user_id=user_id)
 
+    return_url = return_url if return_url else reduce(urljoin, (drf_stripe_settings.FRONT_END_BASE_URL,
+                                  drf_stripe_settings.PORTAL_RETURN_URL_PATH))
+
     session = stripe.billing_portal.Session.create(
         customer=stripe_user.customer_id,
-        return_url=f"{drf_stripe_settings.FRONT_END_BASE_URL}/manage-subscription/"
+        return_url=return_url
     )
 
     return session
