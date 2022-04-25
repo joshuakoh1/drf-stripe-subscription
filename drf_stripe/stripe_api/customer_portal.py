@@ -2,6 +2,7 @@ from .api import stripe_api as stripe
 from .customers import get_or_create_stripe_user
 from ..settings import drf_stripe_settings
 from functools import reduce
+from urllib.parse import urljoin
 
 
 def stripe_api_create_billing_portal_session(user_id, return_url = None):
