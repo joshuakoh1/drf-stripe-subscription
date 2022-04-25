@@ -76,5 +76,5 @@ class StripeCustomerPortal(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        session = stripe_api_create_billing_portal_session(request.user.id, request.get('return_url', None))
+        session = stripe_api_create_billing_portal_session(request.user.id, request.data.get('return_url', None))
         return Response({"url": session.url}, status=status.HTTP_200_OK)
